@@ -1,0 +1,18 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5432,
+  "username": "postgres",
+  "password": "password",
+  "database": "zip_recruit",
+  "entities": [
+    "src/Models/**/*.ts"
+  ],
+  "migrations": [
+    "src/migrations/**/*.ts"
+  ],
+  "cli": {
+    "migrationsDir": "src/migrations",
+    "entitiesDir": "src/Models"
+  }
+}
