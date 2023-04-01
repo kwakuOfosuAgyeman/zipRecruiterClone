@@ -39,27 +39,29 @@ export async function loginUser(email: string, password: string): Promise<{ stat
     } 
 }
 
-export async function applyForJob(status: boolean, userID: number, jobId: number, resumeData: {name: string, contactInfo: string, education: string, workExperience: string, skills: string, filename: string }) {
+export async function applyForJob(status: string, userID: number, jobId: number, resumeData: {name: string, contactInfo: string, education: string, workExperience: string, skills: string, __filename: string }) {
     try{
-        const resume = newResume(resumeData, userID);
-
+        const resume = await newResume(resumeData, userID);
         
-        // const application = AppDataSource.getRepository(Application).create({
-        //     status: status,
-        //     // job: {
-        //     //     id: jobId,
-        //     // },
-        //     // resume: {id: resumeID}
-        // });
+        const applicationRepository = AppDataSource.getRepository(Application).create({
+            status: status,
+            job: {
+                id: jobId
+            },
+            resume: {
+                id: resume.data?.id
+            }            
+        });
 
+        return {status: true, userData: "Applied"};
 
     }catch(Error){
-
+        return Error;
     }
 }
 
 
-async function newResume(resume: {name: string, contactInfo: string, education: string, workExperience: string, skills: string, filename: string }, userID: number) {
+async function newResume(resume: {name: string, contactInfo: string, education: string, workExperience: string, skills: string, __filename: string }, userID: number) {
     try{
         const newResume = AppDataSource.getRepository(Resume).create({
             name: resume.name,
@@ -73,10 +75,31 @@ async function newResume(resume: {name: string, contactInfo: string, education: 
             
         });
 
-
-        // return {status: true, data: }
+        const myresume = await AppDataSource.getRepository(Resume).findOneByOrFail({name: resume.name});
+        return {status: true, data: myresume};
     }catch(Error){
         return {status: false, userData: "Unable to create new Resume"};
+    }
+}
+
+export async function getMyApplications(userId: number){
+    try{
+        const applicationRepository = await AppDataSource.getRepository(Application).find(
+            {
+                where: {
+                    user: {
+                        id: userId
+                    }
+                },
+                relations: {
+                    job: true,
+                    resume: true,
+                }
+            }
+        );
+        return {status: true, userData: applicationRepository};
+    }catch(Error){
+        return {status: false, userData: false};
     }
 }
 

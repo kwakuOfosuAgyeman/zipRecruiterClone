@@ -4,9 +4,9 @@ import { User } from "../Models/User";
 import AppDataSource from "..";
 // import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
-import { registerUser, loginUser } from "../controllers/userController";
+import { registerUser, loginUser, getMyApplications } from "../controllers/userController";
 import { authenticateUser } from "../middleware/userMiddleware";
-import { jobFilter, allJobs } from "../controllers/jobController";
+import { jobFilter, allJobs, getJob } from "../controllers/jobController";
 
 
 // import { Company } from "../Models/Company";
@@ -70,7 +70,7 @@ router.post('/login', async(req, res) => {
 });
 
 
-router.get('/jobs', authenticateUser, async(req, res) => {
+router.get('/jobs', async(req, res) => {
     const jobs = await allJobs();
 
     if(jobs.status){
@@ -82,21 +82,56 @@ router.get('/jobs', authenticateUser, async(req, res) => {
 
 });
 
-router.post('/jobFilter', authenticateUser, async(req, res) => {
+router.post('/jobFilter', async(req, res) => {
     const {jobName, location, description} = req.body;
     
 });
 
 router.post('/apply', authenticateUser, async(req, res) => {
 
-    const {} = req.body;
+    const {name, contactInfo, education, workExperience, skills, filename, userId} = req.body;
 
 });
 
 
 router.post('/jobstatus', authenticateUser, async(req,res) => {
 
+
 });
+
+router.get('/jobs/:id', async(req, res) => {
+    const id = JSON.parse(req.params.id) as number;
+    // console.log(id);
+    
+    
+    const job = await getJob(id).then((job) => {
+        if(job.status){
+            console.log(job.userData);
+            res.status(200).send({userData: job.userData});
+            return;
+        }else{
+            res.status(401).send({ error: "Invalid credentials" });
+            return;
+        }
+    });
+    
+ 
+})
+
+router.get('/applications', async(req, res) => {
+    const {id} = req.body;
+
+    const applications = await getMyApplications(id);
+
+    if(applications.status){
+        res.status(200).send({userData: applications.userData});
+        return;
+    }
+    res.status(401).send({ error: "Internal Server Error" });
+    return;
+
+    // const applications 
+})
 
 // router.post('/job:id', async(req, res))
 

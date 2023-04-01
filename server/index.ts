@@ -7,8 +7,10 @@ import { Job } from "./Models/Job";
 import { Company } from "./Models/Company";
 import { Application } from "./Models/Application";
 import { createClientRouter } from "./routes/clientRoutes";
-import * as jwt from "jsonwebtoken";
-import * as bcrypt from "bcryptjs";
+import cors from 'cors';
+
+// import * as jwt from "jsonwebtoken";
+// import * as bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 
 dotenv.config()
@@ -18,6 +20,9 @@ const port: number = 8000;
 const app: Express = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use(cors({
+    origin: '*'
+}));
 app.use('/api/user', createClientRouter);
 
 const AppDataSource = new DataSource({

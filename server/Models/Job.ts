@@ -21,6 +21,9 @@ export class Job {
   @Column({ nullable: true })
   requirements: string;
 
+  @Column({nullable: true})
+  experienceLevel: string;
+
   @ManyToOne(() => Company, { onDelete: 'CASCADE' })
   company: Company;
 

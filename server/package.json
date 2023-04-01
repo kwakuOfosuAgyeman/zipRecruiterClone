@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc",
@@ -29,6 +30,8 @@
     "typescript": "^4.9.5"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.13",
+    "cors": "^2.8.5",
     "nodemon": "^2.0.21",
     "typeorm": "^0.3.12"
   }

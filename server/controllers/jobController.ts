@@ -38,4 +38,22 @@ export async function jobFilter(jobName: string, location: string, description: 
 
 }
 
+export async function getJob(id: number){
+    try{
+        const jobRepository = await AppDataSource.getRepository(Job).findOne({
+            where: {
+                id: id
+            },
+            relations: {
+                company: true,
+            }
+        });
+        // console.log(jobRepository.company.id);
+        
+        return {status: true, userData: jobRepository};
+    }catch(Error){
+        return {status: false, userData: null};
+    }
+}
+
    

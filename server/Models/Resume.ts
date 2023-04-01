@@ -24,6 +24,9 @@ export class Resume {
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   user: User;
 
+  @Column({nullable: true})
+  coverLetter: string;
+
   @Column({nullable: false})
   filename: string;
 
