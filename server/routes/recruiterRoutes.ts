@@ -3,7 +3,7 @@ const router = express.Router();
 import { User } from "../Models/User";
 import AppDataSource from "..";
 import { Company } from "../Models/Company";
-import { loginRecruiter } from "../controllers/recruiterController";
+import { loginRecruiter, myJobs } from "../controllers/recruiterController";
 // import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
 import { registerUser } from "../controllers/userController";
@@ -12,7 +12,7 @@ import { registerCompany } from "../controllers/companyController";
 
 
 router.post('/register', async(req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     
     const {
         username,
@@ -25,7 +25,7 @@ router.post('/register', async(req, res) => {
         company_website,
     } = req.body;
     const userRepository = AppDataSource.getRepository(User);
-    const companyRepository = AppDataSource.getRepository(Company);
+    // const companyRepository = AppDataSource.getRepository(Company);
     const existingUser = await userRepository.findOne({where: { email }});
 
     
@@ -91,6 +91,19 @@ router.delete('/deleteJob', authenticateRecruiter, async(req, res) => {
 
 });
 
+
+router.get('/jobs', authenticateRecruiter, async(req, res) => {
+    const {user} = req.body.user;
+
+    const jobs = await myJobs(user.id);
+
+    if(jobs.status === false){
+        return res.status(400).send({error: "Bad request"});
+    }
+
+    return res.status(200).send({userData: jobs});
+
+})
 
 
 export {

@@ -27,13 +27,19 @@ export async function loginRecruiter(email: string, password: string): Promise<{
 
 export async function myJobs(id: number) {
     try{
-        const companyRepository = AppDataSource.getRepository(Company).find({
-            where: {
-                owner: {id: id}
-            }
-        });
+        const companyRepository = await AppDataSource.getRepository(Company).findOneByOrFail({owner: {id: id}})
 
-        return {status: true, userData: companyRepository};
+        if(!companyRepository){
+            return {status: false, userData: companyRepository};
+        }
+
+        const jobRepository = await AppDataSource.getRepository(Job).find({where: {
+            company: {
+                id: companyRepository.id
+            }
+        }});
+
+        return {status: true, userData: jobRepository};
         
 
     }catch(Error){
@@ -85,6 +91,7 @@ export async function newJob(title: string, description: string, location: strin
             requirements: requirements,
             company: companyRepository,
         });
+        const myJob = jobRepository.save(newJob);
 
         return {status: true, userData: "Created Successfully"};
     }catch(Error){

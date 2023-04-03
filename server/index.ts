@@ -12,6 +12,7 @@ import cors from 'cors';
 // import * as jwt from "jsonwebtoken";
 // import * as bcrypt from "bcryptjs";
 import dotenv from "dotenv";
+import { createRecruiterRouter } from "./routes/recruiterRoutes";
 
 dotenv.config()
 
@@ -24,6 +25,7 @@ app.use(cors({
     origin: '*'
 }));
 app.use('/api/user', createClientRouter);
+app.use('/api/recruiter', createRecruiterRouter);
 
 const AppDataSource = new DataSource({
     type: "postgres",

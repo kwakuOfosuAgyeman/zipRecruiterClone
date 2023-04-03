@@ -10,7 +10,7 @@ export class Resume {
   name: string;
 
   @Column()
-  contactInfo: string;
+  email: string;
 
   @Column({ nullable: true })
   education: string;

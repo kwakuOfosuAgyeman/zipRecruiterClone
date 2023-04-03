@@ -4,13 +4,13 @@ import { User } from "../Models/User";
 import AppDataSource from "..";
 // import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
-import { registerUser, loginUser, getMyApplications } from "../controllers/userController";
+import { registerUser, loginUser, getMyApplications, applyForJob } from "../controllers/userController";
 import { authenticateUser } from "../middleware/userMiddleware";
 import { jobFilter, allJobs, getJob } from "../controllers/jobController";
-
+import multer from "multer";
 
 // import { Company } from "../Models/Company";
-
+const upload = multer({ dest: "uploads/" });
 
 router.post('/register', async(req, res) => {
     console.log(req.body);
@@ -29,6 +29,8 @@ router.post('/register', async(req, res) => {
         return;
     }
     const user = await registerUser(username, email, password, role);
+    console.log(user);
+    
     if(user.status === false){
         res.status(401).send({ error: "Invalid credentials" });
         return;
@@ -87,17 +89,23 @@ router.post('/jobFilter', async(req, res) => {
     
 });
 
-router.post('/apply', authenticateUser, async(req, res) => {
+router.post('/apply', authenticateUser, upload.single("resume"), async(req, res) => {
 
-    const {name, contactInfo, education, workExperience, skills, filename, userId} = req.body;
+    const {name, email, education, workExperience, skills, userId, status, jobId} = req.body;
+
+    const filename = req.file?.originalname as string;
+    // console.log(filename);
+    
+    const application = await applyForJob(status, userId, jobId, {name, email, education, workExperience, skills, filename});
+
+    if(application.status === true){
+        return res.status(201).send({"Success": "Successfully added a new job"});
+    }
+    return res.status(400).send({"Fail": 'Failed to add a new job. Please try again later'});
 
 });
 
 
-router.post('/jobstatus', authenticateUser, async(req,res) => {
-
-
-});
 
 router.get('/jobs/:id', async(req, res) => {
     const id = JSON.parse(req.params.id) as number;

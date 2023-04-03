@@ -18,8 +18,10 @@ export const authenticateUser = async (
     // let SK = process.env.SECRET_KEY;
     if(process.env.SECRET_KEY){
         const decodedToken = jwt.verify(token, process.env.SECRET_KEY) as JwtPayload;
+        console.log(decodedToken);
+        
         const userRepository = AppDataSource.getRepository(User);
-        const user = await userRepository.findOne(decodedToken.userId);
+        const user = await userRepository.findOneByOrFail({id: decodedToken.userId});
 
         if (!user) {
         return res.status(401).json({ message: 'User not found' });
@@ -57,7 +59,7 @@ export const authenticateRecruiter = async (
     if(process.env.SECRET_KEY){
         const decodedToken = jwt.verify(token, process.env.SECRET_KEY) as JwtPayload;
         const userRepository = AppDataSource.getRepository(User);
-        const user = await userRepository.findOne(decodedToken.userId);
+        const user = await userRepository.findOneByOrFail({id: decodedToken.userId});
 
         if (!user) {
         return res.status(401).json({ message: 'User not found' });
